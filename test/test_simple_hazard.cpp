@@ -2,7 +2,7 @@
 // Created by konstantin on 20.03.24.
 //
 
-#include <simple/hazard.h>
+#include <simple/hazard_ptr.h>
 
 #include <atomic>
 #include <thread>
@@ -37,20 +37,17 @@ void Run(std::atomic<State*>* value) {
                 std::lock_guard guard{mutex};
                 old_value = value->exchange(new State{++x});
             }
-            // stub
-            NHazard::Retire(old_value, [](auto p) {});
+            NHazard::Retire(old_value);
         } else {
             if (auto* p = NHazard::Acquire(value)) {
                 std::lock_guard guard{mutex_check};
-                //        CHECK(p->value >= last_read);
                 ASSERT_TRUE(p->value >= last_read);
                 last_read = p->value;
             }
             NHazard::Release();
         }
     }
-    // stub
-    NHazard::Retire(value->exchange(nullptr), [](auto p) {});
+    NHazard::Retire(value->exchange(nullptr));
 
     NHazard::UnregisterThread();
 }
@@ -66,7 +63,6 @@ TEST_F(TestSimpleHazard, SingleThread) {
 
     std::atomic value = new int{42};
     auto* p = NHazard::Acquire(&value);
-    //  REQUIRE(*p == 42);
     ASSERT_EQ(*p, 42);
 
     for (auto i = 0; i < 100; ++i) {
@@ -89,7 +85,6 @@ TEST_F(TestSimpleHazard, ManyThreads) {
             threads.emplace_back(detail::Run, &value);
         }
         threads.clear();
-        //    REQUIRE(State::num == 0);
         ASSERT_EQ(detail::State::num, 0);
     }
 }
