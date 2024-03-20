@@ -4,18 +4,23 @@
 
 #pragma once
 
+#include <atomic>
+#include <memory>
+
 namespace NHazard {
 
-void RegisterThread();
+void RegisterThread() {}
 
-void UnregisterThread();
+void UnregisterThread() {}
 
 template <class T>
-T *Acquire(std::atomic<T *> *ptr);
+T *Acquire(std::atomic<T *> *ptr) {
+    int a = 1;
+}
 
-void Release();
+void Release() {}
 
 template <class T, class Deleter = std::default_delete<T>>
-void Retire(T *value, Deleter deleter = {});
+void Retire(T *value, Deleter deleter = {}) {}
 
 }  // namespace NHazard
