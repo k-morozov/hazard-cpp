@@ -8,6 +8,7 @@ set(TEST_APP_NAME unit_test_simple_hazard)
 add_executable(${TEST_APP_NAME}
         main.cpp
         test_simple_hazard.cpp
+        test_time_simple_hazard.cpp
 )
 
 target_link_libraries(${TEST_APP_NAME}
