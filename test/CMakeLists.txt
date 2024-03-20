@@ -11,7 +11,7 @@ add_executable(${TEST_APP_NAME}
 )
 
 target_link_libraries(${TEST_APP_NAME}
-        simple_hazard
+        hazard
         ${CONAN_LIBS_GTEST}
         project_sanitizers
         project_warnings

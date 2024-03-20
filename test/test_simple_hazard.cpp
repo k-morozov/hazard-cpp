@@ -4,6 +4,8 @@
 
 #include "gtest/gtest.h"
 
+#include <simple/hazard.h>
+
 
 class TestSimpleHazard : public ::testing::Test {
 public:
