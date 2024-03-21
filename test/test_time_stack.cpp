@@ -15,11 +15,11 @@ using namespace std::chrono_literals;
 using namespace NHazard;
 using namespace NSync;
 
-class TestStack : public ::testing::Test {
+class TestTimeStack : public ::testing::Test {
 public:
 };
 
-TEST_F(TestStack, StressPush) {
+TEST_F(TestTimeStack, StressPush) {
     Stack<int> stack;
     TimeRunner runner{1s};
     for (auto i = 0; i < 8; ++i) {
@@ -49,7 +49,7 @@ static void StressPushPop(uint32_t num_push_threads, uint32_t num_pop_threads) {
     ASSERT_TRUE(pop_runner.Wait() < 10us);
 }
 
-TEST_F(TestStack, StressPushAndPop) {
+TEST_F(TestTimeStack, StressPushAndPop) {
     std::vector<std::pair<uint32_t, uint32_t>> tests = {
         {42, 8}, {75, 5}, {15, 5}, {50, 10}};
     for (auto [num_push_threads, num_pop_threads] : tests) {
