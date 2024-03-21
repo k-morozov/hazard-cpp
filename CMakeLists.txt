@@ -3,6 +3,8 @@ project(hazard-ptr)
 
 set(CMAKE_CXX_STANDARD 20)
 
+set(HAZARD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/hazard)
+
 option(CHECK_SANITIZE "enable sanitizers checks on debug mode" OFF)
 
 # https://llvm.org/docs/CMake.html
@@ -48,4 +50,5 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 add_subdirectory(hazard)
+add_subdirectory(sync-containers)
 add_subdirectory(test)

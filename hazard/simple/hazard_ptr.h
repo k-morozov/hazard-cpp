@@ -14,7 +14,7 @@ namespace NHazard {
 
 namespace detail {
 
-inline constexpr size_t LimitFreeList = 4;
+inline constexpr size_t LimitFreeList = 32;
 extern thread_local std::atomic<void*> hazard_ptr;
 
 struct RetirePtr {
