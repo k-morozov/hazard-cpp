@@ -2,9 +2,9 @@
 
 VERSION_CLANG=16
 CLANG=clang++-$VERSION_CLANG
-BUILD_TYPE=Release
+BUILD_TYPE=Debug
 CONAN_VERSION=1.59.0
-BUILD_DIR=./cmake-build-release
+BUILD_DIR=./build/debug-asan
 
 sudo apt-get update
 sudo apt-get install -y $CLANG pip python3-venv

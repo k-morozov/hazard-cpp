@@ -10,6 +10,7 @@ add_executable(${TEST_APP_NAME}
         test_simple_hazard.cpp
         test_time_simple_hazard.cpp
         test_stack.cpp
+        test_time_stack.cpp
 )
 
 target_link_libraries(${TEST_APP_NAME}

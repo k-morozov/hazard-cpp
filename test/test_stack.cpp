@@ -1,21 +1,18 @@
 //
 // Created by konstantin on 21.03.24.
 //
-#include "gtest/gtest.h"
-
 #include <simple/hazard_ptr.h>
-
 #include <stack/stack.h>
 
+#include <algorithm>
+#include <atomic>
+#include <random>
+#include <ranges>
+#include <string>
 #include <thread>
 #include <vector>
-#include <string>
-#include <atomic>
-#include <ranges>
-#include <random>
 
-
-#include <algorithm>
+#include "gtest/gtest.h"
 
 using namespace std::chrono_literals;
 using namespace NHazard;

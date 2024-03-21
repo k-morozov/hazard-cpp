@@ -15,8 +15,12 @@ template <typename T>
 class Stack {
 public:
     Stack() = default;
+
     void Clear() {}
-    void Push(const T& value) {}
+
+    void Push(const T& value) {
+
+    }
     bool Pop(T* value) {}
 private:
     struct Node {
