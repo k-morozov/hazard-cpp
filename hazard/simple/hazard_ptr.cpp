@@ -7,6 +7,7 @@
 #include <functional>
 #include <mutex>
 #include <unordered_set>
+#include <set>
 
 namespace NHazard {
 
@@ -24,17 +25,18 @@ thread_local std::atomic<void*> hazard_ptr{};
 std::mutex scan_lock;
 
 void ScanFreeList() {
+    approximate_free_list_size.store(0);
+
     std::lock_guard lock(scan_lock);
 
     auto* retired = free_list.exchange(nullptr);
-    approximate_free_list_size.store(0);
 
-    std::vector<void*> hazards;
+    std::set<void*> hazards;
     {
         std::lock_guard g(thread_lock);
         for (auto* state : threads) {
             if (void* hz = state->ptr->load(); hz) {
-                hazards.push_back(hz);
+                hazards.insert(hz);
             }
         }
     }
@@ -43,18 +45,14 @@ void ScanFreeList() {
         auto* next = retired->next;
         bool is_deleted = true;
 
-        for (void* hz : hazards) {
-            if (retired->value == hz) {
-                is_deleted = false;
+        if (hazards.contains(retired->value)) {
+            is_deleted = false;
 
-                retired->next = free_list;
-                while (
-                    !free_list.compare_exchange_weak(retired->next, retired)) {
-                }
-
-                approximate_free_list_size.fetch_add(1);
-                break;
+            retired->next = free_list;
+            while (!free_list.compare_exchange_weak(retired->next, retired)) {
             }
+
+            approximate_free_list_size.fetch_add(1);
         }
 
         if (is_deleted) {

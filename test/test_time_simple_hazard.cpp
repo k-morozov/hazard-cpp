@@ -4,14 +4,12 @@
 
 #include "gtest/gtest.h"
 
-#include "runner.h"
+#include <atomic>
+#include <memory>
+#include <thread>
 
 #include <simple/hazard_ptr.h>
-
-#include <thread>
-#include <memory>
-#include <chrono>
-#include <atomic>
+#include "runner.h"
 
 namespace {
 
@@ -57,12 +55,12 @@ class TestSimpleTimeHazard : public ::testing::Test {
 TEST_F(TestSimpleTimeHazard, ReadOnly) {
     for (auto num_threads : {1, 2, 4, 8, 16}) {
         std::atomic value = new int{1023};
-        RunReadOnly(num_threads, &value);
+        RunReadOnly(static_cast<uint32_t>(num_threads), &value);
     }
 }
 
 TEST_F(TestSimpleTimeHazard, RareUpdates) {
     for (auto num_threads : {1, 2, 4, 8, 16}) {
-        RunRareUpdates(num_threads);
+        RunRareUpdates(static_cast<uint32_t>(num_threads));
     }
 }
