@@ -11,6 +11,8 @@ add_executable(${TEST_APP_NAME}
         test_time_simple_hazard.cpp
         test_stack.cpp
         test_time_stack.cpp
+        test_sync_map.cpp
+        test_time_sync_map.cpp
 )
 
 target_link_libraries(${TEST_APP_NAME}
