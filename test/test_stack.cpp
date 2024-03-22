@@ -82,16 +82,16 @@ TEST_F(TestStack, Pushes) {
     };
 
     std::vector<std::jthread> threads;
-    for (auto i : kRange) {
+    for (std::weakly_incrementable auto i : kRange) {
         threads.emplace_back(push_f, i);
     }
     threads.clear();
 
-    std::array<int, kNumThreads> lasts;
+    std::array<int, kNumThreads> lasts{};
     std::ranges::copy(std::views::iota(kN, kN + kNumThreads), lasts.begin());
     size_t count = 0;
     for (int value; s.Pop(&value); ++count) {
-        auto& last = lasts[value % kNumThreads];
+        auto& last = lasts[static_cast<unsigned long>(value % kNumThreads)];
         ASSERT_TRUE(value == last - kNumThreads);
         last = value;
     }
@@ -120,12 +120,13 @@ TEST_F(TestStack, Pops) {
             std::lock_guard guard{mutex};
             ASSERT_TRUE(value >= 0);
             ASSERT_TRUE(value < last);
-            ++used[value];
+            ++used[static_cast<unsigned long>(value)];
         }
         UnregisterThread();
     };
 
     std::vector<std::jthread> threads;
+    threads.reserve(kNumThreads);
     for (auto i = 0; i < kNumThreads; ++i) {
         threads.emplace_back(pop_f);
     }
@@ -142,9 +143,9 @@ std::vector<T> Merge(const std::vector<std::vector<T>>& data) {
 }
 
 TEST_F(TestStack, PushPop) {
-    static constexpr auto kNumPushThreads = 6;
-    static constexpr auto kNumPopThreads = 2;
-    static constexpr auto kNumIterations = 10'000;
+    static constexpr auto kNumPushThreads = 6u;
+    static constexpr auto kNumPopThreads = 2u;
+    static constexpr auto kNumIterations = 10'000u;
     RegisterThread();
 
     std::vector<std::vector<std::string>> pushed(kNumPushThreads);
@@ -152,7 +153,8 @@ TEST_F(TestStack, PushPop) {
     Stack<std::string> stack;
     std::atomic push_finished = 0;
 
-    for (auto i = 0; i < kNumPushThreads; ++i) {
+    threads.reserve(kNumPushThreads);
+    for (size_t i = 0; i < kNumPushThreads; ++i) {
         threads.emplace_back([&, i] {
             RegisterThread();
             std::mt19937 gen{3675475u * (i + 1)};
@@ -164,9 +166,9 @@ TEST_F(TestStack, PushPop) {
                 }
                 return s;
             };
-            for (auto j = 0; j < kNumIterations; ++j) {
+            for (size_t j = 0; j < kNumIterations; ++j) {
                 auto str = gen_string();
-                pushed[i].push_back(str);
+                pushed[static_cast<unsigned long>(i)].push_back(str);
                 stack.Push(str);
             }
             ++push_finished;
@@ -175,7 +177,7 @@ TEST_F(TestStack, PushPop) {
     }
 
     std::vector<std::vector<std::string>> popped(kNumPopThreads);
-    for (auto i = 0; i < kNumPopThreads; ++i) {
+    for (size_t i = 0; i < kNumPopThreads; ++i) {
         threads.emplace_back([&, &popped = popped[i]] {
             RegisterThread();
             std::string str;

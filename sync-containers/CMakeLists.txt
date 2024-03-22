@@ -6,6 +6,8 @@ include_directories("${HAZARD_DIR}")
 
 add_library(sync-containers
         stack/stack.cpp
+        map/sync_map.h
+        map/sync_map.cpp
 )
 
 target_link_libraries(sync-containers PRIVATE
